@@ -1,4 +1,4 @@
-package _2;
+package _2_add_two_numbers;
 
 public class AddTwoNumbers {
 
