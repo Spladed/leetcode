@@ -5,7 +5,7 @@ import java.util.*;
 public class FindIfPathExistsInGraph {
 
     private static boolean validPath(int n, int[][] edges, int source, int destination) {
-        return dfs(n, edges, source, destination);
+        return unionFind(n, edges, source, destination);
     }
 
     private static boolean bfs(int n, int[][] edges, int source, int destination) {
@@ -41,12 +41,12 @@ public class FindIfPathExistsInGraph {
     }
 
     private static boolean dfs(List<Integer>[] adj, boolean[] visited, int source, int destination) {
-        if(source == destination) {
+        if (source == destination) {
             return true;
         }
         visited[source] = true;
         for (Integer next : adj[source]) {
-            if(!visited[next] && dfs(adj, visited, next, destination)) {
+            if (!visited[next] && dfs(adj, visited, next, destination)) {
                 return true;
             }
         }
@@ -67,7 +67,56 @@ public class FindIfPathExistsInGraph {
     }
 
     private static boolean unionFind(int n, int[][] edges, int source, int destination) {
-        return false;
+        UnionFind unionFind = new UnionFind(n);
+        for (int[] edge : edges) {
+            unionFind.union(edge[0], edge[1]);
+        }
+        return unionFind.connect(source, destination);
+    }
+
+    private static class UnionFind {
+
+        private final int[] parent;
+
+        private final int[] rank;
+
+        public UnionFind(int n) {
+            parent = new int[n];
+            rank = new int[n];
+            // parent 用来存储每个节点的父节点，初始化时，每个节点的父节点都设置为自己
+            for (int i = 0; i < n; i++) {
+                parent[i] = i;
+            }
+        }
+
+        public void union(int x, int y) {
+            int rootX = findRoot(x);
+            int rootY = findRoot(y);
+            if (rootX != rootY) {
+                if (rank[rootX] > rank[rootY]) {
+                    parent[rootY] = rootX;
+                } else if (rank[rootX] < rank[rootY]) {
+                    parent[rootX] = rootY;
+                } else {
+                    parent[rootY] = rootX;
+                    rank[rootX]++;
+                }
+            }
+        }
+
+        private int findRoot(int val) {
+            if (parent[val] != val) {
+                // 如果当前结点的父节点不是自己（即自己不是根结点）
+                // 就找到找到父节点的根结点
+                // 然后把自己的父节点置换为根结点（即路径压缩）
+                parent[val] = findRoot(parent[val]);
+            }
+            return parent[val];
+        }
+
+        public boolean connect(int source, int destination) {
+            return findRoot(source) == findRoot(destination);
+        }
     }
 
     public static void main(String[] args) {
