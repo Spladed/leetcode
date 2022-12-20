@@ -1,27 +1,15 @@
 package _1971_find_if_path_exists_in_graph;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 
 public class FindIfPathExistsInGraph {
 
     private static boolean validPath(int n, int[][] edges, int source, int destination) {
-        return bfs(n, edges, source, destination);
+        return dfs(n, edges, source, destination);
     }
 
     private static boolean bfs(int n, int[][] edges, int source, int destination) {
-        List<Integer>[] adjacencyList = new List[n];
-        for (int i = 0; i < n; i++) {
-            adjacencyList[i] = new ArrayList<>();
-        }
-        for (int[] edge : edges) {
-            int x = edge[0];
-            int y = edge[1];
-            adjacencyList[x].add(y);
-            adjacencyList[y].add(x);
-        }
+        List<Integer>[] adjacencyList = GenerateAdjacencyList(n, edges);
 
         boolean[] visited = new boolean[n];
 
@@ -47,7 +35,35 @@ public class FindIfPathExistsInGraph {
     }
 
     private static boolean dfs(int n, int[][] edges, int source, int destination) {
+        List<Integer>[] adj = GenerateAdjacencyList(n, edges);
+        boolean[] visited = new boolean[n];
+        return dfs(adj, visited, source, destination);
+    }
+
+    private static boolean dfs(List<Integer>[] adj, boolean[] visited, int source, int destination) {
+        if(source == destination) {
+            return true;
+        }
+        visited[source] = true;
+        for (Integer next : adj[source]) {
+            if(!visited[next] && dfs(adj, visited, next, destination)) {
+                return true;
+            }
+        }
         return false;
+    }
+
+    private static List<Integer>[] GenerateAdjacencyList(int n, int[][] edges) {
+        List<Integer>[] adj = new List[n];
+        for (int i = 0; i < n; i++) {
+            adj[i] = new ArrayList<>();
+        }
+
+        for (int[] edge : edges) {
+            adj[edge[0]].add(edge[1]);
+            adj[edge[1]].add(edge[0]);
+        }
+        return adj;
     }
 
     private static boolean unionFind(int n, int[][] edges, int source, int destination) {
