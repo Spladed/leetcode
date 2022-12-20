@@ -67,56 +67,45 @@ public class FindIfPathExistsInGraph {
     }
 
     private static boolean unionFind(int n, int[][] edges, int source, int destination) {
-        UnionFind unionFind = new UnionFind(n);
-        for (int[] edge : edges) {
-            unionFind.union(edge[0], edge[1]);
+        int[] parent = new int[n];
+        int[] rank = new int[n];
+        for (int i = 0; i < parent.length; i++) {
+            parent[i] = i;
         }
-        return unionFind.connect(source, destination);
+
+        for (int[] edge : edges) {
+            union(edge, parent, rank);
+        }
+
+        return isConnect(parent, source, destination);
     }
 
-    private static class UnionFind {
-
-        private final int[] parent;
-
-        private final int[] rank;
-
-        public UnionFind(int n) {
-            parent = new int[n];
-            rank = new int[n];
-            // parent 用来存储每个节点的父节点，初始化时，每个节点的父节点都设置为自己
-            for (int i = 0; i < n; i++) {
-                parent[i] = i;
+    private static void union(int[] edge, int[] parent, int[] rank) {
+        int x = edge[0];
+        int y = edge[1];
+        int rootX = findRoot(parent, x);
+        int rootY = findRoot(parent, y);
+        if (rootX != rootY) {
+            if (rank[rootX] < rank[rootY]) {
+                parent[rootX] = rootY;
+            } else if (rank[rootX] > rank[rootY]) {
+                parent[rootY] = rootX;
+            } else {
+                parent[rootY] = rootX;
+                rank[rootX]++;
             }
         }
+    }
 
-        public void union(int x, int y) {
-            int rootX = findRoot(x);
-            int rootY = findRoot(y);
-            if (rootX != rootY) {
-                if (rank[rootX] > rank[rootY]) {
-                    parent[rootY] = rootX;
-                } else if (rank[rootX] < rank[rootY]) {
-                    parent[rootX] = rootY;
-                } else {
-                    parent[rootY] = rootX;
-                    rank[rootX]++;
-                }
-            }
+    private static int findRoot(int[] parent, int val) {
+        if (parent[val] != val) {
+            parent[val] = findRoot(parent, parent[val]);
         }
+        return parent[val];
+    }
 
-        private int findRoot(int val) {
-            if (parent[val] != val) {
-                // 如果当前结点的父节点不是自己（即自己不是根结点）
-                // 就找到找到父节点的根结点
-                // 然后把自己的父节点置换为根结点（即路径压缩）
-                parent[val] = findRoot(parent[val]);
-            }
-            return parent[val];
-        }
-
-        public boolean connect(int source, int destination) {
-            return findRoot(source) == findRoot(destination);
-        }
+    private static boolean isConnect(int[] parent, int source, int destination) {
+        return findRoot(parent, source) == findRoot(parent, destination);
     }
 
     public static void main(String[] args) {
