@@ -12,10 +12,10 @@ public class CheckIfThereIsAValidPathInAGrid {
         m = grid.length;
         n = grid[0].length;
         data = grid;
-        return dfs();
+        return bfs();
     }
 
-    private static boolean dfs() {
+    private static boolean bfs() {
         int[] source = {0, 0};
         int[] destination = {m - 1, n - 1};
         boolean[][] visited = new boolean[m][n];
