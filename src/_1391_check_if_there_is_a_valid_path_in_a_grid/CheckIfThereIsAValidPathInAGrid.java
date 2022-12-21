@@ -24,7 +24,6 @@ public class CheckIfThereIsAValidPathInAGrid {
                 int current = data[i][j];
                 processHorizontal(parent, rank, i, j, current);
                 processPortrait(parent, rank, i, j, current);
-
             }
         }
         int source = calculateCurrentPosition(0, 0);
