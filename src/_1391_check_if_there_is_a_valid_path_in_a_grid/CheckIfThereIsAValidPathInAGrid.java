@@ -1,5 +1,7 @@
 package _1391_check_if_there_is_a_valid_path_in_a_grid;
 
+import java.util.*;
+
 public class CheckIfThereIsAValidPathInAGrid {
 
     private static int m = 0;
@@ -10,7 +12,97 @@ public class CheckIfThereIsAValidPathInAGrid {
         m = grid.length;
         n = grid[0].length;
         data = grid;
-        return unionFind();
+        return dfs();
+    }
+
+    private static boolean dfs() {
+        int[] source = {0, 0};
+        int[] destination = {m - 1, n - 1};
+        boolean[][] visited = new boolean[m][n];
+        Queue<int[]> waitForVisit = new ArrayDeque<>();
+        visited[source[0]][source[1]] = true;
+        waitForVisit.offer(new int[]{0, 0});
+        while (!waitForVisit.isEmpty()) {
+            int[] coordinate = waitForVisit.poll();
+            if (Arrays.equals(coordinate, destination)) {
+                break;
+            }
+            int current = data[coordinate[0]][coordinate[1]];
+            for (int[] next : whereToGoNext(current, coordinate[0], coordinate[1])) {
+                if (!visited[next[0]][next[1]]) {
+                    waitForVisit.offer(next);
+                    visited[next[0]][next[1]] = true;
+                }
+            }
+        }
+        return visited[destination[0]][destination[1]];
+    }
+
+    private static List<int[]> whereToGoNext(int current, int x, int y) {
+        ArrayList<int[]> list = new ArrayList<>();
+        switch (current) {
+            case 1:
+                goLeft(x, y, list);
+                goRight(x, y, list);
+                break;
+            case 2:
+                goTop(x, y, list);
+                goBottom(x, y, list);
+                break;
+            case 3:
+                goLeft(x, y, list);
+                goBottom(x, y, list);
+                break;
+            case 4:
+                goBottom(x, y, list);
+                goRight(x, y, list);
+                break;
+            case 5:
+                goLeft(x, y, list);
+                goTop(x, y, list);
+                break;
+            case 6:
+                goTop(x, y, list);
+                goRight(x, y, list);
+                break;
+        }
+        return list;
+    }
+
+    private static void goBottom(int x, int y, ArrayList<int[]> list) {
+        if (x + 1 < m) {
+            int next = data[x + 1][y];
+            if (next == 2 || next == 5 || next == 6) {
+                list.add(new int[]{x + 1, y});
+            }
+        }
+    }
+
+    private static void goTop(int x, int y, ArrayList<int[]> list) {
+        if (x - 1 >= 0) {
+            int next = data[x - 1][y];
+            if (next == 2 || next == 3 || next == 4) {
+                list.add(new int[]{x - 1, y});
+            }
+        }
+    }
+
+    private static void goRight(int x, int y, ArrayList<int[]> list) {
+        if (y + 1 < n) {
+            int next = data[x][y + 1];
+            if (next == 1 || next == 3 || next == 5) {
+                list.add(new int[]{x, y + 1});
+            }
+        }
+    }
+
+    private static void goLeft(int x, int y, ArrayList<int[]> list) {
+        if (y - 1 >= 0) {
+            int next = data[x][y - 1];
+            if (next == 1 || next == 4 || next == 6) {
+                list.add(new int[]{x, y - 1});
+            }
+        }
     }
 
     private static boolean unionFind() {
@@ -80,7 +172,7 @@ public class CheckIfThereIsAValidPathInAGrid {
     }
 
     public static void main(String[] args) {
-        int[][] grid = new int[][]{new int[]{2, 4, 3}, new int[]{6, 5, 2}};
+        int[][] grid = new int[][]{new int[]{2}, new int[]{2}, new int[]{2}, new int[]{2}, new int[]{2}, new int[]{2}, new int[]{6}};
         boolean result = hasValidPath(grid);
         System.out.println(result);
     }
