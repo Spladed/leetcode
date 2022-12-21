@@ -12,7 +12,7 @@ public class CheckIfThereIsAValidPathInAGrid {
         m = grid.length;
         n = grid[0].length;
         data = grid;
-        return bfs();
+        return dfs();
     }
 
     private static boolean bfs() {
@@ -36,6 +36,27 @@ public class CheckIfThereIsAValidPathInAGrid {
             }
         }
         return visited[destination[0]][destination[1]];
+    }
+
+    private static boolean dfs() {
+        int[] source = {0, 0};
+        int[] destination = {m - 1, n - 1};
+        boolean[][] visited = new boolean[m][n];
+        return dfs(visited, source, destination);
+    }
+
+    private static boolean dfs(boolean[][] visited, int[] source, int[] destination) {
+        if (Arrays.equals(source, destination)) {
+            return true;
+        }
+        visited[source[0]][source[1]] = true;
+        int current = data[source[0]][source[1]];
+        for (int[] next : whereToGoNext(current, source[0], source[1])) {
+            if(!visited[next[0]][next[1]] && dfs(visited, next, destination)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static List<int[]> whereToGoNext(int current, int x, int y) {
