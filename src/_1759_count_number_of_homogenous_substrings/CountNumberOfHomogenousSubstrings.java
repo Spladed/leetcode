@@ -25,8 +25,8 @@ public class CountNumberOfHomogenousSubstrings {
     }
 
     // 假设当前连续字符序列是zzz
-    // 那么一共有zzz（出现1次）、zz（出现两次）、z（出现三次）三种子项
-    // 共计 1 + 2 + 3 = 6
+    // 那么一共有zzz（出现1次）、zz（ <zz>z & z<zz> 出现两次）、z（ <z>zz & z<z>z & zz<z> 出现三次）三种子项
+    // 共计 1 + 2 + 3 = 6次
     // 这里其实是一个等差数列，求n项和（n为连续字符序列的长度， 数列的差为1）
     // 计算等差数列前n项和
     private static long calculate(int count) {
